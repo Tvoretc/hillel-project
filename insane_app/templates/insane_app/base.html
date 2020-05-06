@@ -11,7 +11,7 @@
 
   <body>
     <nav class="navbar navbar-dark bg-black navbar-expand-md">
-      <a class="navbar-brand" href="/insane/"> <img src="/static/insane_app/images/logo.jpg" alt="Insane" height="40"> </a>
+      <a class="navbar-brand" href="/insane/"> <img src="{% static '/insane_app/images/logo.jpg' %}" alt="Insane" height="40"> </a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -31,8 +31,17 @@
         </form> -->
         <div class="navbar-nav">
           {% if user.is_authenticated %}
-            <div class="progress m-3">
-              <div class="progress-bar bg-info" role="progressbar" style="width: 100px;" aria-valuenow="{{user.profile.sanity}}" aria-valuemin="0" aria-valuemax="{{user.profile.rank.sanity_cap}}">{{user.profile.sanity}}</div>
+            <div class="container">
+              <div class="column">
+                <div class="row">
+                  <div class="mx-auto my-0">
+                    <div class="username-color">{{user.username}}</div>
+                  </div>
+                </div>
+                <div class="progress m-1 row">
+                  <div class="progress-bar bg-info" role="progressbar" style="width: 100px;" aria-valuenow="{{user.profile.sanity}}" aria-valuemin="0" aria-valuemax="{{user.profile.rank.sanity_cap}}">{{user.profile.sanity}}</div>
+                </div>
+              </div>
             </div>
             <div class="nav-item m-1">
               <a class="nav-link" href="{% url 'insane:logout' %}">Logout</a>

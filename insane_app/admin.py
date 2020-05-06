@@ -16,3 +16,7 @@ admin.site.register(
     ProductImage,
     readonly_fields = ('image_tag',)
 )
+admin.site.register(StoryComment)
+admin.site.register(StoryCommentLike)
+admin.site.register(ProductComment)
+admin.site.register(ProductCommentLike)

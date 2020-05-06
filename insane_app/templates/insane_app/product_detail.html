@@ -33,14 +33,33 @@
       <div class="col-xl-3"></div>
     </div>
   </div>
-  <p>Categories:
-    {% for cat in object.categories.all %}
-      {{cat.name}}{% if forloop.last %}.{% else %},{% endif %}
+    <p>Categories:
+      {% for cat in object.categories.all %}
+        {{cat.name}}{% if forloop.last %}.{% else %},{% endif %}
+      {% empty %}
+        no categories.
+      {% endfor %}
+    </p>
+    <p>{{object.description}}</p>
+    <p>Seller: {{object.owner.username}}</p>
+    <p>Price: {{object.price}}</p>
+
+    {% for comment in object.productcomment_set.all %}
+      <div class="">
+        <div class="d-flex justify-content-between">
+          <div>
+            {{comment.user.username}}
+          </div>
+          <div>
+            {{comment.dt_created}}
+          </div>
+        </div>
+        <div class="">
+          <p>{{comment.text}}</p>
+        </div>
+      </div>
     {% empty %}
-      no categories.
+      No comments yet.
     {% endfor %}
-  </p>
-  <p>{{object.description}}</p>
-  <p>Seller: {{object.owner.username}}</p>
-  <p>Price: {{object.price}}</p>
+  </div>
 {% endblock %}

@@ -142,6 +142,39 @@ def _story_like_delete(sender, instance, **kwargs):
     Story.objects.filter(pk=instance.story.pk).update(like_count=F('like_count')-1)
 
 
+class StoryComment(models.Model):
+    user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
+    story = models.ForeignKey(Story, on_delete=models.CASCADE)
+    text = models.TextField(max_length=300)
+    like_count = models.PositiveIntegerField()
+    dt_created = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.user.username}`s comment on {self.story.name}."
+
+
+class StoryCommentLike(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    comment = models.ForeignKey(StoryComment, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = (("user", "comment"),)
+
+    def __str__(self):
+        return f"{self.user.username} likes {self.comment.user.username}`s comment on {self.comment.story.name}."
+
+@receiver(post_save, sender=StoryCommentLike)
+def _story_like_save(sender, instance, **kwargs):
+    StoryComment.objects.filter(pk=instance.comment.pk).update(like_count=F('like_count')+1)
+
+@receiver(pre_delete, sender=StoryCommentLike)
+def _story_like_delete(sender, instance, **kwargs):
+    StoryComment.objects.filter(pk=instance.comment.pk).update(like_count=F('like_count')-1)
+
+#
+#   Product
+#
+
 class Category(models.Model):
     name = models.CharField(unique=True, max_length=20)
 
@@ -160,6 +193,7 @@ class Product(models.Model):
         blank=True
     )
     dt_created = models.DateTimeField(auto_now_add=True)
+    # stock
     price = models.DecimalField(max_digits=10, decimal_places=2)
     categories = models.ManyToManyField(Category)
 
@@ -190,3 +224,25 @@ class ProductImage(models.Model):
 
     image_tag.short_description = 'Image'
     image_tag.allow_tags = True
+
+
+class ProductComment(models.Model):
+    user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    text = models.TextField(max_length=300)
+    like_count = models.PositiveIntegerField()
+    dt_created = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.user.username}`s comment on {self.product.name}."
+
+
+class ProductCommentLike(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    comment = models.ForeignKey(ProductComment, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = (("user", "comment"),)
+
+    def __str__(self):
+        return f"{self.user.username} likes {self.comment.user.username}`s comment on {self.comment.product.name}."

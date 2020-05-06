@@ -1,0 +1,67 @@
+.bg-black{
+  background-color: black;
+}
+
+body{
+  background-color: #202020;
+}
+
+.list-group-item-flush{
+  background-color: gray;
+}
+
+.jumbotron{
+  height: stretch;
+}
+
+.nav{
+  margin-right: 0;
+}
+
+.card-link{
+  color: invert;
+}
+
+
+/* carousel */
+.carousel-item {
+  max-height: 300px;
+  max-width: 600px;
+  height: 100%;
+  width: auto;
+}
+
+.carousel-item img {
+  max-height: 300px;
+  max-width: 600px;
+  height: 100%;
+  width: auto;
+}
+
+.carousel-control-next-icon,
+.carousel-control-prev-icon,
+.carousel-indicator {
+  filter: invert(1);
+}
+
+/* likes */
+
+.fas.fa-thumbs-up{
+  color: green !important;
+}
+
+.like{
+  background-color: transparent;
+  padding: 0;
+  margin: 4px;
+  border: none;
+}
+
+/* login form */
+.btn-primary{
+  background-color: black;
+  border: 0;
+}
+.btn-primary:hover{
+  background-color: #030303;
+}

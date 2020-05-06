@@ -1,16 +1,53 @@
 {% extends 'insane_app/base.html' %}
+{% load humanize %}
 
 {% block body %}
   <div class="jumbotron">
     <h3>{{object.name}}</h3>
     <p>{{object.body}}</p>
     <p>
-      <button data-storyid="{{ object.id }}" id="like"
-        class="{% if liked %}fas{% else %}far{% endif %} fa-thumbs-up">
+    <div class="dropdown">
+      <button data_story_id="{{ object.id }}" id="like"
+        {% if not user.is_authenticated %}data-toggle="dropdown"{% endif %}
+        class="{% if object.liked %}fas{% else %}far{% endif %} fa-thumbs-up like
+        {% if user.is_authenticated %}on_click_story_like{% endif %}">
       </button>
+      <div id="like_dropdown" class="dropdown-menu" aria-labelledby="like" aria-expanded="true">
+        <a class="dropdown-item" href="{% url 'insane:login' %}">Please login first</a>
+      </div>
       <var id="like_count">{{object.like_count}}</var>
+    </div>
     </p>
     <p>Date: {{object.dt_created}}</p>
     <p>Created by: {{object.author.username}}</p>
+    <form class="" method="post">
+      <input type="textarea" name="in_comment" value="">
+      <input type="submit" name="save_comment" value="Submit">
+    </form>
+    {% for comment in comments %}
+      <div class="">
+        <div class="d-flex justify-content-between">
+          <div>
+            {{comment.user.username}}
+          </div>
+          <div>
+            {{comment.dt_created|naturaltime}}
+          </div>
+        </div>
+        <div class="">
+          <p>{{comment.text}}</p>
+        </div>
+        <div class="">
+          <button data_comment_id="{{ comment.id }}"
+            data_story_id="{{ object.id }}" id="like_comment_{{ comment.id }}"
+            class="{% if comment.liked %}fas{% else %}far{% endif %} fa-thumbs-up like
+            {% if user.is_authenticated %}on_click_story_comment_like{% endif %}">
+          </button>
+          <var id="like_comment_{{ comment.id }}_count">{{comment.like_count}}</var>
+        </div>
+      </div>
+    {% empty %}
+      No comments yet.
+    {% endfor %}
   </div>
 {% endblock %}

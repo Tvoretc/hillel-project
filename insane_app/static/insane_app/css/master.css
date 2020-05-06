@@ -6,6 +6,10 @@ body{
   background-color: #202020;
 }
 
+.username-color{
+  color: #808080;
+}
+
 .list-group-item-flush{
   background-color: gray;
 }
@@ -50,7 +54,7 @@ body{
   color: green !important;
 }
 
-#like{
+.like{
   background-color: transparent;
   padding: 0;
   margin: 4px;

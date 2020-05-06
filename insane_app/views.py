@@ -9,7 +9,8 @@ from django.contrib.auth.decorators import login_required
 
 User = get_user_model()
 
-from insane_app.models import Story, Product, Category, StoryLike
+from insane_app.models import Story, Product, Category, StoryLike, StoryComment,\
+    StoryCommentLike
 
 
 class StoryListView(ListView):
@@ -32,18 +33,49 @@ class StoryDetailView(DetailView):
         context['now'] = timezone.now()
 
         try:
-            StoryLike.objects.get(story__pk = kwargs['object'].pk, user = User.objects.first())    #self.request.user)
-            context['liked'] = True
+            story_like = StoryLike.objects.get(story__pk = kwargs['object'].pk,
+                user = self.request.user)
+            context['story'].liked = True
+
         except StoryLike.DoesNotExist:
             pass
 
+        comments = context['story'].storycomment_set.all()
+        for comment in comments:
+            try:
+                comment_like = StoryCommentLike.objects.get(
+                    comment = comment, user = self.request.user
+                )
+                comment.liked = True
+            except StoryCommentLike.DoesNotExist:
+                pass
+
+
+        context['comments'] = comments
         return context
 
 
 def like_story(request, pk):
+    if not request.user.is_authenticated:
+        return HttpResponse(-1)
+
     object, created = StoryLike.objects.get_or_create(
-        user=User.objects.first(),
+        user=request.user,
         story=Story.objects.get(pk=pk)
+    )
+
+    if not created:
+        object.delete()
+    else:
+        created = 1
+
+    return HttpResponse(created)
+
+
+def like_story_comment(request, story_pk, comment_pk):
+    object, created = StoryCommentLike.objects.get_or_create(
+        user=request.user,
+        comment=StoryComment.objects.get(pk=comment_pk)
     )
 
     if not created:
@@ -62,7 +94,7 @@ class StoryCreateView(CreateView):
         self.object = form.save(commit=False)
         self.object.author = self.request.user
         self.object.save()
-        
+
         return redirect(self.get_success_url())
 
 

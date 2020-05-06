@@ -13,6 +13,7 @@ urlpatterns = [
     path('accounts/logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('<int:pk>/', views.StoryDetailView.as_view(), name='story'),
     path('<int:pk>/like/', views.like_story, name='like_story'),
+    path('<int:story_pk>/like_comment/<int:comment_pk>/', views.like_story_comment, name='like_story_comment'),
     path('create/', login_required(views.StoryCreateView.as_view()), name='create_story'),
     path('market/', views.ProductListView.as_view(), name='market'),
     path('market/<int:pk>/', views.ProductDetailView.as_view(), name='product'),

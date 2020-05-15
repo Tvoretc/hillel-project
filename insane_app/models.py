@@ -20,29 +20,14 @@ class SanityRank(models.Model):
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    _sanity = models.PositiveIntegerField(default=0)
+    sanity = models.PositiveIntegerField(default=0)
     rank = models.ForeignKey(SanityRank, on_delete=models.PROTECT)
 
-    @property
-    def sanity(self):
-        return self._sanity
-
-    @sanity.setter
-    def sanity(self, value):
-        if value <= self.rank.sanity_cap:
-            self._sanity = value
-        else:
-            self._sanity = self.rank.sanity_cap
-
-    # FIXME: this code breaks the program for everyone else
-    # @receiver(post_save, sender=User)
     def create_user_profile(sender, instance, created, **kwargs):
         if created:
             rank = SanityRank.objects.first()
             Profile.objects.create(user=instance, sanity=rank.sanity_cap, rank=rank)
 
-    # FIXME: this code breaks the program for everyone else
-    # @receiver(post_save, sender=User)
     def save_user_profile(sender, instance, **kwargs):
         instance.profile.save()
 
@@ -52,6 +37,9 @@ class Profile(models.Model):
 
     def __str__(self):
         return self.user.username
+
+    def modify_sanity(delta):
+        Profile.objects.filter(sanity__lt=F('rank.sanity_cap')).sanity = F('sanity') + delta
 
 
 class UserGroup(models.Model):

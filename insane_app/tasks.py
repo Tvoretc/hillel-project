@@ -1,18 +1,31 @@
-# from celery import Celery
-#
-# # from insane_app.models import Profile
-#
-# app = Celery('tasks', backend='amqp', broker='amqp://')
-#
-# @app.task
-# def increment_sanity_task(ignore_result=True):
-#     print(f'1+1={2}')
-#     # Profile.objects.filter(sanity__lt=F('rank.sanity_cap')).sanity = F('sanity') + 1
-from celery import Celery
+from __future__ import absolute_import, unicode_literals
 
-app = Celery('tasks', broker='pyamqp://guest@localhost//')
+from celery import shared_task
+from demoapp.models import Widget
 
-@app.task(ignore_result=True)
-def print_hello():
-    print('hello there')
-    return 1;
+
+@shared_task
+def add(x, y):
+    return x + y
+
+
+@shared_task
+def mul(x, y):
+    return x * y
+
+
+@shared_task
+def xsum(numbers):
+    return sum(numbers)
+
+
+@shared_task
+def count_widgets():
+    return Widget.objects.count()
+
+
+@shared_task
+def rename_widget(widget_id, name):
+    w = Widget.objects.get(id=widget_id)
+    w.name = name
+    w.save()

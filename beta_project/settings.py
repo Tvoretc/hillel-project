@@ -23,11 +23,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.humanize',
 
-    # Students` applications
     'insane_app',
-    # Vadim Goloviychuk's app
-    'rent_cars',
-    'cinema.apps.CinemaConfig',
 ]
 
 MIDDLEWARE = [
@@ -115,7 +111,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # MEDIA_URL = '/media/'
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'mediafiles')
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'mediafiles')
 
 # Local settings
 

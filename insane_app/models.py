@@ -23,6 +23,8 @@ class Profile(models.Model):
     sanity = models.PositiveIntegerField(default=0)
     rank = models.ForeignKey(SanityRank, on_delete=models.PROTECT)
 
+    # creates Profile when User is created
+    @receiver(post_save, sender=User)
     def create_user_profile(sender, instance, created, **kwargs):
         if created:
             rank = SanityRank.objects.first()
@@ -52,7 +54,7 @@ class UserGroup(models.Model):
         User,
         related_name='user_group',
         through='Membership',
-        through_fields = ('user_group', 'user')
+        through_fields=('user_group', 'user')
     )
     dt_created = models.DateTimeField(auto_now_add=True)
 
@@ -60,7 +62,7 @@ class UserGroup(models.Model):
         return self.name
 
     def add_member(self, new_user):
-        Membership.objects.create(user = new_user, user_group=self)
+        Membership.objects.create(user=new_user, user_group=self)
 
 
 class Membership(models.Model):
@@ -97,12 +99,12 @@ class Story(models.Model):
         return reverse('insane:story', args=[self.pk])
 
 
-def get_story_image (instance, filename):
+def get_story_image_path (instance, filename):
     return f"images/{instance.author.username}/{filename}"
 
 
 class StoryImage(models.Model):
-    image = models.ImageField(upload_to=get_story_image)
+    image = models.ImageField(upload_to=get_story_image_path)
     product = models.ForeignKey(
         Story,
         related_name='image',
@@ -123,6 +125,7 @@ class StoryLike(models.Model):
 
 @receiver(post_save, sender=StoryLike)
 def _story_like_save(sender, instance, **kwargs):
+    print(instance.story.pk)
     Story.objects.filter(pk=instance.story.pk).update(like_count=F('like_count')+1)
 
 @receiver(pre_delete, sender=StoryLike)
@@ -152,11 +155,11 @@ class StoryCommentLike(models.Model):
         return f"{self.user.username} likes {self.comment.user.username}`s comment on {self.comment.story.name}."
 
 @receiver(post_save, sender=StoryCommentLike)
-def _story_like_save(sender, instance, **kwargs):
+def _story_comment_like_save(sender, instance, **kwargs):
     StoryComment.objects.filter(pk=instance.comment.pk).update(like_count=F('like_count')+1)
 
 @receiver(pre_delete, sender=StoryCommentLike)
-def _story_like_delete(sender, instance, **kwargs):
+def _story_comment_like_delete(sender, instance, **kwargs):
     StoryComment.objects.filter(pk=instance.comment.pk).update(like_count=F('like_count')-1)
 
 #

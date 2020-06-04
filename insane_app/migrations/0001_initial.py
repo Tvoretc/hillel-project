@@ -62,7 +62,7 @@ class Migration(migrations.Migration):
             name='StoryImage',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('image', models.ImageField(upload_to=insane_app.models.get_story_image)),
+                ('image', models.ImageField(upload_to=insane_app.models.get_story_image_path)),
                 ('product', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='image', to='insane_app.Story')),
             ],
         ),
@@ -70,7 +70,7 @@ class Migration(migrations.Migration):
             name='Profile',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('_sanity', models.PositiveIntegerField(default=0)),
+                ('sanity', models.PositiveIntegerField(default=0)),
                 ('rank', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='insane_app.SanityRank')),
                 ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],

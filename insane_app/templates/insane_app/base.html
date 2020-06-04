@@ -5,14 +5,31 @@
     <meta charset="utf-8">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link rel="stylesheet" href="/static/insane_app/css/master.css">
-    <link rel="shortcut icon" type="image/png" href="{% static '/insane_app/images/favicon.ico' %}"/>
+    <link rel="shortcut icon" type="image/png" href="{% static '/insane_app/images/icon.svg' %}"/>
     <title>Insane Site</title>
   </head>
 
   <body>
     <nav class="navbar navbar-dark bg-black navbar-expand-md">
-      <a class="navbar-brand" href="/insane/"> <img src="{% static '/insane_app/images/logo.jpg' %}" alt="Insane" height="40"> </a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <a class="navbar-brand" href="/insane/">
+        <picture>
+          <source media="(max-width: 600px)" srcset="{% static '/insane_app/images/icon_white.svg' %}">
+          <img
+            src="{% static '/insane_app/images/logo.jpg' %}"
+            alt="Insane"
+            height="40"
+          >
+        </picture>
+      </a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
         <span class="navbar-toggler-icon"></span>
       </button>
 

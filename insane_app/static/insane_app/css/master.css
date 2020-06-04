@@ -30,16 +30,19 @@ body{
 /* carousel */
 .carousel-item {
   max-height: 300px;
-  max-width: 600px;
-  height: 100%;
-  width: auto;
+  height: auto;
+  width: 100%;
 }
 
 .carousel-item img {
   max-height: 300px;
-  max-width: 600px;
-  height: 100%;
+  height: auto;
   width: auto;
+  margin: auto;
+}
+
+.carousel {
+  background-color: white;
 }
 
 .carousel-control-next-icon,

@@ -3,6 +3,7 @@ Django 3.0.3 settings for beta_project project.
 """
 
 import os
+import mimetypes
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -98,6 +99,11 @@ USE_L10N = True
 
 USE_TZ = True
 
+# Login
+
+LOGIN_REDIRECT_URL = '/insane/'
+LOGIN_URL = '/insane/accounts/login/'
+LOGOUT_REDIRECT_URL = '/insane/'
 
 # Static files (CSS, JavaScript, Images)
 
@@ -112,6 +118,8 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 # MEDIA_URL = '/media/'
 
 # MEDIA_ROOT = os.path.join(BASE_DIR, 'mediafiles')
+
+# mimetypes.add_type("image/svg+xml", ".svg", True)
 
 # Local settings
 

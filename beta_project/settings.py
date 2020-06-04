@@ -22,6 +22,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
+    'django_celery_results',
 
     'insane_app',
 ]
@@ -112,6 +113,12 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 # MEDIA_URL = '/media/'
 
 # MEDIA_ROOT = os.path.join(BASE_DIR, 'mediafiles')
+
+
+# celery
+
+# CELERY_RESULT_BACKEND = 'django_db'
+# CELERY_CACHE_BACKEND = 'django-cache'
 
 # Local settings
 

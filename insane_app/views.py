@@ -5,12 +5,23 @@ from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView
 from django.contrib.auth import get_user_model
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 User = get_user_model()
 
 from insane_app.models import Story, Product, Category, StoryLike, StoryComment,\
     StoryCommentLike
+
+
+class EnergyRequiredMixin(object):
+    energy_required = 0
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.energy < energy_required:
+            raise Http404("not enough energy")
+        else:
+            return super(EnergyRequiredMixin, self).dispatch(
+                request, *args, kwargs)
 
 
 class StoryListView(ListView):
@@ -86,16 +97,23 @@ def like_story_comment(request, story_pk, comment_pk):
     return HttpResponse(created)
 
 
-class StoryCreateView(CreateView):
+class StoryCreateView(EnergyRequiredMixin, LoginRequiredMixin, CreateView):
     model = Story
     fields = ('name', 'body')
 
-    def form_valid(self, form):
-        self.object = form.save(commit=False)
-        self.object.author = self.request.user
-        self.object.save()
+    energy_required = 4
 
-        return redirect(self.get_success_url())
+    def form_valid(self, form):
+        if self.request.user.energy >= energy_required:
+            self.object = form.save(commit=False)
+            self.object.author = self.request.user
+            self.object.save()
+            self.request.user.energy -= energy_required
+
+            return redirect(self.get_success_url())
+
+        else:
+            raise Http404("Not enough energy.")
 
 
 class ProductListView(ListView):
@@ -127,12 +145,14 @@ class ProductDetailView(DetailView):
         return context
 
 
-class ProductCreateView(CreateView):
+class ProductCreateView(EnergyRequiredMixin, LoginRequiredMixin, CreateView):
 
     model = Product
     fields = ('name', 'description', 'price')
 
     success_url = '/insane/market/'
+
+    energy_required = 5
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -140,11 +160,15 @@ class ProductCreateView(CreateView):
         return context
 
     def form_valid(self, form):
-        self.object = form.save(commit=False)
-        self.object.owner = self.request.user
-        categories = self.request.POST.getlist('categories', ())
-        self.object.save()
+        if self.request.user.energy >= energy_required:
+            self.object = form.save(commit=False)
+            self.object.owner = self.request.user
+            categories = self.request.POST.getlist('categories', ())
+            self.object.save()
 
-        if categories:
-            self.object.categories.set(Category.objects.filter(pk__in=categories))
-        return redirect(self.get_success_url())
+            if categories:
+                self.object.categories.set(Category.objects.filter(pk__in=categories))
+            return redirect(self.get_success_url())
+
+        else:
+            raise Http404("Not enough energy.")

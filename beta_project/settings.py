@@ -120,13 +120,10 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # MEDIA_ROOT = os.path.join(BASE_DIR, 'mediafiles')
 
-=======
-
 # celery
 
 # CELERY_RESULT_BACKEND = 'django_db'
 # CELERY_CACHE_BACKEND = 'django-cache'
->>>>>>> cd7e9f50969d55105fb54a83c2f68e3b5f620654
 
 # Local settings
 

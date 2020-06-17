@@ -9,6 +9,7 @@ app_name = 'insane'
 
 urlpatterns = [
     path('', views.StoryListView.as_view(), name='stories'),
+    path('accounts/signup/', views.SignUpView.as_view(), name='signup'),
     path('accounts/login/', auth_views.LoginView.as_view(template_name='insane_accounts/login.html'), name='login'),
     path('accounts/logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('<int:pk>/', views.StoryDetailView.as_view(), name='story'),

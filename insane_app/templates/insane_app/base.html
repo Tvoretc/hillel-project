@@ -55,8 +55,12 @@
                     <div class="username-color">{{user.username}}</div>
                   </div>
                 </div>
-                <div class="progress m-1 row">
-                  <div class="progress-bar bg-info" role="progressbar" style="width: 100px;" aria-valuenow="{{user.profile.sanity}}" aria-valuemin="0" aria-valuemax="{{user.profile.rank.sanity_cap}}">{{user.profile.sanity}}</div>
+                <div class="progress m-1 row" style="width: 100px;" >
+                  <div class="progress-bar bg-info" role="progressbar"
+                    style="width: {% widthratio user.profile.sanity user.profile.rank.sanity_cap 100 %}%;"
+                    aria-valuenow="{{user.profile.sanity}}" aria-valuemin="0"
+                    aria-valuemax="{{user.profile.rank.sanity_cap}}"
+                  >{{user.profile.sanity}}</div>
                 </div>
               </div>
             </div>
@@ -64,6 +68,9 @@
               <a class="nav-link" href="{% url 'insane:logout' %}">Logout</a>
             </div>
           {% else %}
+            <div class="nav-item m-1">
+              <a class="nav-link" href="{% url 'insane:signup' %}">Sign Up</a>
+            </div>
             <div class="nav-item m-1">
               <a class="nav-link" href="{% url 'insane:login' %}">Login</a>
             </div>
@@ -78,8 +85,10 @@
         {% endblock %}
       </div>
       <div class="col-md-8">
-        {% block body %}
-        {% endblock %}
+        <div class="jumbotron pt-3 pb-4">
+          {% block body %}
+          {% endblock %}
+        </div>
       </div>
       <div class="col-md-2">
         <div class="right_bar">

@@ -32,7 +32,8 @@ $('.on_click_story_comment_like').click(function(){
       $('#like_comment_'+story_comment_id)[0].classList.remove('far');
     }
     else if(created == -1){
-      $("#like_dropdown")[0].setAttribute("aria-expanded", "true");
+    $("#comment_like_dropdown"+story_comment_id)[0].setAttribute("aria-expanded", "true");
+    alert(story_comment_id);
     }
     else{
       $('#like_comment_' + story_comment_id + '_count').html(

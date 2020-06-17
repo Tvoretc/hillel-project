@@ -1,0 +1,19 @@
+{% extends 'insane_app/base.html' %}
+
+{% block body %}
+  <h3>Register</h3>
+  <form class="" action="index.html" method="post">
+    {% csrf_token %}
+    <div class="form-group">
+      <div>
+        <label for="id_username">Username:</label>
+      </div>
+      <input type="text" name="username" id="id_username" autofocus autocomplete="username" value="">
+      <div>
+        <label for="id_password">Password:</label>
+      </div>
+      <input type="password" name="password" id="id_password" autocomplete="password" value="">
+    </div>
+    <input class="btn btn-primary m-2" type="submit" name="register" value="Register">
+  </form>
+{% endblock %}

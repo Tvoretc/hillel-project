@@ -1,10 +1,12 @@
 from django.shortcuts import render, redirect
+from django.urls import reverse
 from django.utils import timezone
 from django.http import HttpResponse, Http404
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView
 from django.contrib.auth import get_user_model
+from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 User = get_user_model()
@@ -18,6 +20,8 @@ class SanityRequiredMixin(object):
 
     def dispatch(self, request, *args, **kwargs):
         if request.user.profile.sanity < self.sanity_required:
+            request.user.profile.sanity += 5
+            request.user.profile.save()
             raise Http404("not enough sanity")
         else:
             return super(SanityRequiredMixin, self).dispatch(
@@ -42,24 +46,25 @@ class StoryDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['now'] = timezone.now()
-
-        try:
-            story_like = StoryLike.objects.get(story__pk = kwargs['object'].pk,
-                user = self.request.user)
-            context['story'].liked = True
-
-        except StoryLike.DoesNotExist:
-            pass
-
         comments = context['story'].storycomment_set.all()
-        for comment in comments:
+
+        if self.request.user.is_authenticated:
             try:
-                comment_like = StoryCommentLike.objects.get(
-                    comment = comment, user = self.request.user
-                )
-                comment.liked = True
-            except StoryCommentLike.DoesNotExist:
+                story_like = StoryLike.objects.get(story__pk = kwargs['object'].pk,
+                    user = self.request.user)
+                context['story'].liked = True
+
+            except StoryLike.DoesNotExist:
                 pass
+
+            for comment in comments:
+                try:
+                    comment_like = StoryCommentLike.objects.get(
+                        comment = comment, user = self.request.user
+                    )
+                    comment.liked = True
+                except StoryCommentLike.DoesNotExist:
+                    pass
 
 
         context['comments'] = comments
@@ -84,6 +89,9 @@ def like_story(request, pk):
 
 
 def like_story_comment(request, story_pk, comment_pk):
+    if not request.user.is_authenticated:
+        return HttpResponse(-1)
+
     object, created = StoryCommentLike.objects.get_or_create(
         user=request.user,
         comment=StoryComment.objects.get(pk=comment_pk)
@@ -104,18 +112,14 @@ class StoryCreateView(SanityRequiredMixin, LoginRequiredMixin, CreateView):
     sanity_required = 4
 
     def form_valid(self, form):
-        if self.request.user.profile.sanity >= self.sanity_required:
-            self.object = form.save(commit=False)
-            self.object.author = self.request.user
-            self.object.save()
-            profile = self.request.user.profile
-            profile.sanity -= self.sanity_required
-            profile.save()
+        self.object = form.save(commit=False)
+        self.object.author = self.request.user
+        self.object.save()
+        profile = self.request.user.profile
+        profile.sanity -= self.sanity_required
+        profile.save()
 
-            return redirect(self.get_success_url())
-
-        else:
-            raise Http404("Not enough sanity.")
+        return redirect(self.get_success_url())
 
 
 class ProductListView(ListView):
@@ -162,18 +166,21 @@ class ProductCreateView(SanityRequiredMixin, LoginRequiredMixin, CreateView):
         return context
 
     def form_valid(self, form):
-        if self.request.user.profile.sanity >= self.sanity_required:
-            self.object = form.save(commit=False)
-            self.object.owner = self.request.user
-            categories = self.request.POST.getlist('categories', ())
-            self.object.save()
-            profile = self.request.user.profile
-            profile.sanity -= self.sanity_required
-            profile.save()
+        self.object = form.save(commit=False)
+        self.object.owner = self.request.user
+        categories = self.request.POST.getlist('categories', ())
+        self.object.save()
+        profile = self.request.user.profile
+        profile.sanity -= self.sanity_required
+        profile.save()
 
-            if categories:
-                self.object.categories.set(Category.objects.filter(pk__in=categories))
-            return redirect(self.get_success_url())
+        if categories:
+            self.object.categories.set(Category.objects.filter(pk__in=categories))
+        return redirect(self.get_success_url())
 
-        else:
-            raise Http404("Not enough sanity.")
+
+class SignUpView(CreateView):
+    model = User
+    fields = ('username', 'password', )
+
+    template_name = 'insane_accounts/signup.html'
